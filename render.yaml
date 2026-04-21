@@ -1,6 +1,7 @@
 services:
   - type: web
     name: revenue-risk-radar
+    rootDir: revenue-risk-radar
     env: docker
     plan: free
     autoDeploy: true

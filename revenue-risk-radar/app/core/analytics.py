@@ -112,7 +112,7 @@ def detect_risks(filters: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def _recommended_action(reasons: list[str]) -> str:
-    if "ADR materially below compset" in reasons and "occupancy below 65%" in reasons:
+    if "ADR materially below compset" in reasons and "occupancy below 70%" in reasons:
         return "Review price positioning and launch targeted demand stimulation."
     if "high cancellation rate" in reasons:
         return "Audit cancellation sources and rate rules for the affected hotel."

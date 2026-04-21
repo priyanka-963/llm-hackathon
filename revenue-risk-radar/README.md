@@ -21,6 +21,11 @@ The app supports scoped profiles:
 
 ## Run Locally
 
+This project has two runnable frontends:
+
+- Streamlit: use this when you want the same UI as `streamlit run streamlit_app.py`.
+- FastAPI: use this when you want the API-backed HTML app served by `app/main.py`.
+
 For Streamlit:
 
 ```bash
@@ -83,17 +88,24 @@ docker run --env-file .env -p 8000:8000 revenue-risk-radar
 
 ## Render Deployment
 
-1. Push this folder to GitHub.
-2. Create a Render Web Service using the included `render.yaml`.
-3. Add either `GROQ_API_KEY` or `GEMINI_API_KEY` as a secret environment variable.
-4. Deploy.
+1. Push the repository to GitHub.
+2. Create a Render Web Service using the root-level `render.yaml`.
+3. If you create the service manually, set the Render root directory to `revenue-risk-radar`.
+4. Add `LLM_PROVIDER=groq` and `GROQ_API_KEY` as environment variables.
+5. To use Gemini instead, set `LLM_PROVIDER=gemini` and `GEMINI_API_KEY`.
+6. Redeploy or restart the service after saving secrets.
+
+Render serves the FastAPI HTML app. If you previewed locally with Streamlit, the Render UI will not look identical because it is a different frontend.
 
 ## Streamlit Cloud Deployment
 
-1. Push this folder to GitHub.
-2. In Streamlit Cloud, set the main file path to `streamlit_app.py`.
+1. Push the repository to GitHub.
+2. In Streamlit Cloud, set the main file path to `revenue-risk-radar/streamlit_app.py`.
 3. Add `LLM_PROVIDER=groq` and `GROQ_API_KEY=your_key_here` in app secrets.
-4. Deploy.
+4. To use Gemini instead, set `LLM_PROVIDER=gemini` and `GEMINI_API_KEY=your_key_here`.
+5. Deploy.
+
+Streamlit Cloud serves the same UI as the local Streamlit command.
 
 ## Endpoints
 

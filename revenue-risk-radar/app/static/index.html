@@ -213,7 +213,7 @@
       if (data.llm_configured) {
         status.textContent = `AI enabled: ${data.llm_provider}`;
       } else {
-        status.textContent = `AI provider required: add ${data.llm_provider === "gemini" ? "GEMINI_API_KEY" : "GROQ_API_KEY"}`;
+        status.textContent = `AI provider required: set ${data.llm_required_env || "GROQ_API_KEY or GEMINI_API_KEY"}`;
       }
     }
 

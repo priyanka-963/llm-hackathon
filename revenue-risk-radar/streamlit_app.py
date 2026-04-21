@@ -145,7 +145,7 @@ except PermissionError as exc:
 pack = insight_pack(filters)
 summary = pack["summary"]
 
-provider_label = llm_client.provider if llm_client.configured() else "AI provider required"
+provider_label = llm_client.provider if llm_client.configured() else f"set {llm_client.required_env_var()}"
 st.info(f"AI status: {provider_label}. Current scope: {policy['label']}.")
 
 st.subheader("Ask the AI copilot")

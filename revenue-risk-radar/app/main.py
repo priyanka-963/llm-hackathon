@@ -61,6 +61,8 @@ def health() -> dict[str, Any]:
         "service": settings.app_name,
         "llm_provider": llm_client.provider,
         "llm_configured": llm_client.configured(),
+        "llm_required_env": llm_client.required_env_var(),
+        "llm_config_hint": llm_client.configuration_hint(),
     }
 
 

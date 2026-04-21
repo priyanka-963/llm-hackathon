@@ -29,6 +29,20 @@ class LLMClient:
             return bool(self.settings.gemini_api_key)
         return False
 
+    def required_env_var(self) -> str:
+        if self.provider == "gemini":
+            return "GEMINI_API_KEY"
+        if self.provider == "groq":
+            return "GROQ_API_KEY"
+        return "LLM_PROVIDER"
+
+    def configuration_hint(self) -> str:
+        if self.provider == "gemini":
+            return "Set LLM_PROVIDER=gemini and GEMINI_API_KEY in the deployment environment."
+        if self.provider == "groq":
+            return "Set LLM_PROVIDER=groq and GROQ_API_KEY in the deployment environment."
+        return "Set LLM_PROVIDER to groq or gemini, then add the matching API key."
+
     def complete(self, system_prompt: str, user_prompt: str, max_tokens: int = 700) -> str:
         if not self.configured():
             return self._fallback_answer(user_prompt)
@@ -101,7 +115,7 @@ class LLMClient:
         return (
             "AI provider is not configured for this deployment. "
             "The KPI dashboard, risk scoring, access scoping, and hotel metrics are still live. "
-            "Add GROQ_API_KEY or GEMINI_API_KEY in the deployment environment, then restart the server."
+            f"{self.configuration_hint()} Restart the server after saving the secret."
         )
 
 
