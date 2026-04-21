@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Hotel Revenue Risk Radar</title>
+  <style>
+    :root {
+      --ink: #17211b;
+      --muted: #607066;
+      --line: #d8ded4;
+      --paper: #fffdf6;
+      --field: #f7f3e8;
+      --moss: #355e3b;
+      --gold: #b97a14;
+      --clay: #b4532c;
+      --green: #0f7a4f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(185,122,20,.18), transparent 26%),
+        radial-gradient(circle at 86% 0%, rgba(53,94,59,.18), transparent 30%),
+        linear-gradient(135deg, #f8f0df, #eef4e9 58%, #fbf7ef);
+      min-height: 100vh;
+    }
+    .shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+    .card {
+      background: rgba(255,253,246,.86);
+      border: 1px solid rgba(216,222,212,.95);
+      border-radius: 28px;
+      box-shadow: 0 24px 70px rgba(23,33,27,.09);
+      backdrop-filter: blur(8px);
+    }
+    .intro { padding: 32px; }
+    .eyebrow { color: var(--gold); text-transform: uppercase; letter-spacing: .14em; font-size: 12px; font-weight: 800; }
+    h1 { margin: 10px 0 12px; font-size: clamp(36px, 7vw, 72px); line-height: .92; letter-spacing: -.06em; }
+    .lead { color: var(--muted); font-size: 18px; max-width: 720px; line-height: 1.55; }
+    .panel { padding: 22px; }
+    .filters { display: grid; gap: 12px; }
+    label { display: grid; gap: 6px; color: var(--muted); font-size: 13px; font-weight: 700; }
+    select, input, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--field);
+      border-radius: 16px;
+      padding: 12px 14px;
+      color: var(--ink);
+      font: inherit;
+    }
+    textarea { min-height: 116px; resize: vertical; }
+    button {
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--moss), #173f25);
+      color: white;
+      padding: 13px 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+    .metric { padding: 18px; }
+    .metric span { color: var(--muted); font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+    .metric strong { display: block; margin-top: 8px; font-size: 28px; }
+    .main { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .copilot { margin-bottom: 16px; }
+    .section { padding: 22px; }
+    h2 { margin: 0 0 14px; font-size: 22px; }
+    .risk, .hotel, .chat-answer {
+      border: 1px solid var(--line);
+      background: rgba(247,243,232,.72);
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 10px;
+      line-height: 1.45;
+    }
+    .badge {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: rgba(180,83,44,.14);
+      color: var(--clay);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .muted { color: var(--muted); }
+    .chat-row { display: grid; gap: 12px; }
+    .chat-answer { white-space: pre-wrap; background: #fffaf0; }
+    .status-line {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: rgba(53,94,59,.12);
+      color: var(--moss);
+    }
+    @media (max-width: 900px) {
+      .hero, .main, .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 44px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="card intro">
+        <div class="eyebrow">Deployed AI Copilot</div>
+        <h1>Hotel Revenue Risk Radar</h1>
+      </div>
+      <div class="card panel">
+        <div class="filters">
+          <label>Viewer profile
+            <select id="profile">
+              <option value="internal">Internal analyst</option>
+              <option value="marriott">Marriott partner</option>
+              <option value="hilton">Hilton partner</option>
+            </select>
+          </label>
+          <label>Chain filter
+            <select id="chain"><option value="">All chains</option></select>
+          </label>
+          <label>City
+            <select id="city"><option value="">All cities</option></select>
+          </label>
+          <button id="refresh">Refresh dashboard</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card section copilot">
+      <h2>Ask the AI copilot</h2>
+      <div class="chat-row">
+        <div class="status-line">
+          <span id="providerStatus" class="status-pill">Checking AI provider...</span>
+          <span>Use the profile selector above to test scoped answers.</span>
+        </div>
+        <textarea id="question">Which hotel needs attention and what should we do next?</textarea>
+        <button id="ask">Ask Copilot</button>
+        <div id="answer" class="chat-answer muted">Ask a question to generate a business explanation.</div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card metric"><span>Revenue</span><strong id="revenue">$0</strong></div>
+      <div class="card metric"><span>Bookings</span><strong id="bookings">0</strong></div>
+      <div class="card metric"><span>Cancellation Rate</span><strong id="cxl">0%</strong></div>
+      <div class="card metric"><span>ADR Gap</span><strong id="adrGap">$0</strong></div>
+    </section>
+
+    <section class="main">
+      <div class="card section">
+        <h2>Risk Watchlist</h2>
+        <div id="risks" class="muted">Loading risks...</div>
+      </div>
+      <div class="card section">
+        <h2>Hotel Performance</h2>
+        <div id="hotels" class="muted">Loading hotels...</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      profile: document.getElementById("profile"),
+      chain: document.getElementById("chain"),
+      city: document.getElementById("city"),
+      question: document.getElementById("question"),
+      answer: document.getElementById("answer")
+    };
+
+    const money = (value) => `$${Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    const pct = (value) => `${Number(value || 0).toFixed(1)}%`;
+
+    function payload() {
+      return {
+        profile: state.profile.value,
+        chain_name: state.chain.value || null,
+        city: state.city.value || null
+      };
+    }
+
+    async function loadOptions() {
+      const res = await fetch("/api/options");
+      const data = await res.json();
+      data.chains.forEach(chain => state.chain.add(new Option(chain, chain)));
+      data.cities.forEach(city => state.city.add(new Option(city, city)));
+    }
+
+    async function loadProviderStatus() {
+      const res = await fetch("/health");
+      const data = await res.json();
+      const status = document.getElementById("providerStatus");
+      if (data.llm_configured) {
+        status.textContent = `AI enabled: ${data.llm_provider}`;
+      } else {
+        status.textContent = `AI provider required: add ${data.llm_provider === "gemini" ? "GEMINI_API_KEY" : "GROQ_API_KEY"}`;
+      }
+    }
+
+    function renderDashboard(data) {
+      const summary = data.insights.summary;
+      document.getElementById("revenue").textContent = money(summary.revenue_usd);
+      document.getElementById("bookings").textContent = Number(summary.bookings || 0).toLocaleString();
+      document.getElementById("cxl").textContent = pct(summary.cancellation_rate_pct);
+      document.getElementById("adrGap").textContent = money(summary.adr_gap_vs_compset_usd);
+
+      const risks = data.insights.risks;
+      document.getElementById("risks").innerHTML = risks.length ? risks.map(risk => `
+        <div class="risk">
+          <span class="badge">${risk.risk_level} risk ${risk.risk_score}</span>
+          <strong>${risk.hotel_name}</strong>
+          <div class="muted">${risk.reasons.join(", ")}</div>
+          <div>${risk.recommended_action}</div>
+        </div>
+      `).join("") : "<span class='muted'>No material risks found for this scope.</span>";
+
+      const hotels = data.insights.hotels;
+      document.getElementById("hotels").innerHTML = hotels.map(hotel => `
+        <div class="hotel">
+          <strong>${hotel.hotel_name}</strong>
+          <div class="muted">${hotel.chain_name} · ${hotel.city}</div>
+          <div>${money(hotel.revenue_usd)} revenue · ${hotel.bookings} bookings · ${pct(hotel.avg_occupancy_pct)} occupancy</div>
+        </div>
+      `).join("");
+    }
+
+    async function refresh() {
+      const res = await fetch("/api/insights", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload())
+      });
+      if (!res.ok) {
+        state.answer.textContent = await res.text();
+        return;
+      }
+      renderDashboard(await res.json());
+    }
+
+    async function ask() {
+      state.answer.textContent = "Thinking...";
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload(), question: state.question.value })
+      });
+      const data = await res.json();
+      state.answer.textContent = data.answer;
+    }
+
+    document.getElementById("refresh").addEventListener("click", refresh);
+    document.getElementById("ask").addEventListener("click", ask);
+    state.profile.addEventListener("change", () => {
+      if (state.profile.value === "marriott") state.chain.value = "MARRIOTT";
+      if (state.profile.value === "hilton") state.chain.value = "HILTON";
+      refresh();
+    });
+
+    loadProviderStatus();
+    loadOptions().then(refresh);
+  </script>
+</body>
+</html>
